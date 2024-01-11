@@ -59,12 +59,23 @@ namespace Restful_MagicVillaAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<VillaDTO> CreateVilla([FromBody] VillaDTO villaDTO)
         { 
+            ///Implementing and accessing ModelState Validation if we comment [ApiController} from line#11
+            //if (!ModelState.IsValid) {
+            //    return BadRequest();
+            //}
+
+            //Implementing CustomError ModelState
+            if (VillaStore.villaList.FirstOrDefault(u=>u.Name.ToLower() == villaDTO.Name.ToLower()) != null)
+            {
+                ModelState.AddModelError("CustomError", "Villa Already Exists");
+                return BadRequest(ModelState);
+            }
             if (villaDTO == null) {
-                    return BadRequest(); 
-                }
+                return BadRequest(); 
+            }
 
             if (villaDTO.Id > 0) {
-                    return StatusCode(StatusCodes.Status500InternalServerError);
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
             villaDTO.Id = VillaStore.villaList.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
