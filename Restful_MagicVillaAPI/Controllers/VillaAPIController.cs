@@ -12,21 +12,40 @@ namespace Restful_MagicVillaAPI.Controllers
     public class VillaAPIController : ControllerBase
     {
         [HttpGet]
-        public IEnumerable<VillaDTO> GetVillas()
+        public ActionResult<IEnumerable<VillaDTO>> GetVillas()
         {
-            return VillaStore.villaList;
+            return Ok(VillaStore.villaList);
         }
 
         [HttpGet("{id:int}")]
-        public VillaDTO GetVilla(int id)
+        //ResponseType as ststus code...
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<VillaDTO> GetVilla(int id)
         {
-            return VillaStore.villaList.FirstOrDefault(u => u.Id == id);
+            if (id == 0) {  
+                return BadRequest(); 
+            }
+            var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
+            if (villa == null) { 
+                return NotFound(); 
+            }
+
+            return Ok(villa);
         }
 
         [HttpGet("name")]
-        public VillaDTO GetVilla(string name)
+        public ActionResult<VillaDTO> GetVilla(string name)
         {
-            return VillaStore.villaList.FirstOrDefault(u => u.Name == name);
+            if (name == null) {
+                return BadRequest(string.Empty);
+            }
+            var villa = VillaStore.villaList.FirstOrDefault(u => u.Name == name);
+            if (villa == null) {
+                return NotFound(string.Empty);
+            }
+            return Ok(villa);
         }
 
     }
