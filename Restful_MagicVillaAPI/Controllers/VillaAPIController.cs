@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Restful_MagicVillaAPI.Data;
 using Restful_MagicVillaAPI.Models;
 using Restful_MagicVillaAPI.Models.DTO;
 
@@ -13,10 +14,20 @@ namespace Restful_MagicVillaAPI.Controllers
         [HttpGet]
         public IEnumerable<VillaDTO> GetVillas()
         {
-            return new List<VillaDTO> {
-            new VillaDTO{ Id=1, Name="Pool Villa"},
-            new VillaDTO{ Id=1, Name="Beach Villa"}
-            };
+            return VillaStore.villaList;
         }
+
+        [HttpGet("{id:int}")]
+        public VillaDTO GetVilla(int id)
+        {
+            return VillaStore.villaList.FirstOrDefault(u => u.Id == id);
+        }
+
+        [HttpGet("name")]
+        public VillaDTO GetVilla(string name)
+        {
+            return VillaStore.villaList.FirstOrDefault(u => u.Name == name);
+        }
+
     }
 }
