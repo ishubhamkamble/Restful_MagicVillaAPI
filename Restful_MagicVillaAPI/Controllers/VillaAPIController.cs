@@ -12,6 +12,7 @@ namespace Restful_MagicVillaAPI.Controllers
     public class VillaAPIController : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<IEnumerable<VillaDTO>> GetVillas()
         {
             return Ok(VillaStore.villaList);
@@ -36,6 +37,9 @@ namespace Restful_MagicVillaAPI.Controllers
         }
 
         [HttpGet("name")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<VillaDTO> GetVilla(string name)
         {
             if (name == null) {
@@ -48,5 +52,24 @@ namespace Restful_MagicVillaAPI.Controllers
             return Ok(villa);
         }
 
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<VillaDTO> CreateVilla([FromBody] VillaDTO villaDTO)
+        { 
+            if (villaDTO == null) {
+                    return BadRequest(); 
+                }
+
+            if (villaDTO.Id > 0) {
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+
+            villaDTO.Id = VillaStore.villaList.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
+
+            VillaStore.villaList.Add(villaDTO);
+            return Ok(villaDTO);
+        }
     }
 }
