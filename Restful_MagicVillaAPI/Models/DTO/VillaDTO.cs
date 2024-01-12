@@ -9,5 +9,9 @@ namespace Restful_MagicVillaAPI.Models.DTO
         [Required]
         [MaxLength(30)]
         public string Name { get; set; }
+
+        public int Occupacy { get; set; }
+
+        public int Sqft { get; set; }
     }
 }

@@ -83,5 +83,40 @@ namespace Restful_MagicVillaAPI.Controllers
             VillaStore.villaList.Add(villaDTO);
             return CreatedAtRoute("GetVilla", new { id = villaDTO.Id}, villaDTO);
         }
+
+        [HttpDelete("{id:int}", Name = "DeleteVilla")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult DeleteVilla(int id)
+        {
+            if (id == 0) {
+                return BadRequest();
+            }
+            var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
+            if (villa == null) {
+                return NotFound();
+            }
+            VillaStore.villaList.Remove(villa);
+            return NoContent();
+        }
+
+        [HttpPut("{id:int}", Name = "Update Villa")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult UpdateVilla(int id, [FromBody] VillaDTO villaDTO)
+        {
+            if (villaDTO == null || id != villaDTO.Id) {
+                return BadRequest();
+            }
+
+            var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
+
+            villa.Name = villaDTO.Name;
+            villa.Occupacy = villaDTO.Occupacy;
+            villa.Sqft = villaDTO.Sqft;
+
+            return NoContent();
+        }
     }
 }
