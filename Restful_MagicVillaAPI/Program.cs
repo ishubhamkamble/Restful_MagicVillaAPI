@@ -1,8 +1,10 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers().AddNewtonsoftJson();
+//Adding Content Negotiation for acccepting/denying the xml input and outputv
+builder.Services.AddControllers(option=>
+                { option.ReturnHttpNotAcceptable = true; })
+                .AddNewtonsoftJson().AddXmlDataContractSerializerFormatters(); //accepting output xml built in support
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
