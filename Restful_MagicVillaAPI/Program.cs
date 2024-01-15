@@ -1,6 +1,13 @@
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//Adding Serilog Implementation
+Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.File("Logs/villaLogs.txt", rollingInterval:RollingInterval.Day).CreateLogger();
+builder.Host.UseSerilog();
+
+
 //Adding Content Negotiation for acccepting/denying the xml input and outputv
 builder.Services.AddControllers(option=>
                 { option.ReturnHttpNotAcceptable = true; })
