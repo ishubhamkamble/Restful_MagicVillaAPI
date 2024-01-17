@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Restful_MagicVillaAPI.Data;
 using Restful_MagicVillaAPI.Models;
 using Restful_MagicVillaAPI.Models.DTO;
@@ -139,7 +140,7 @@ namespace Restful_MagicVillaAPI.Controllers
                 return BadRequest();
             }
 
-            var villa = _db.Villas.FirstOrDefault(u => u.Id == id);
+            var villa = _db.Villas.AsNoTracking().FirstOrDefault(u => u.Id == id);
 
             Villa model = new()
             {
@@ -166,7 +167,7 @@ namespace Restful_MagicVillaAPI.Controllers
             {
                 return BadRequest();
             }
-            var villa = _db.Villas.FirstOrDefault(u => u.Id == id);
+            var villa = _db.Villas.AsNoTracking().FirstOrDefault(u => u.Id == id);
             if (villa == null)
             {
                 return BadRequest();
