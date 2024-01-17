@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Restful_MagicVillaAPI.Data;
-using Restful_MagicVillaAPI.Logging;
 using Restful_MagicVillaAPI.Models;
 using Restful_MagicVillaAPI.Models.DTO;
 using System.Xml.Linq;
@@ -14,11 +13,9 @@ namespace Restful_MagicVillaAPI.Controllers
     [ApiController]
     public class VillaAPIController : ControllerBase
     {
-        private readonly ILogging _logger;
 
-        public VillaAPIController(ILogging logger)
+        public VillaAPIController()
         {
-            _logger = logger;
         }
 
         [HttpGet]
@@ -26,7 +23,6 @@ namespace Restful_MagicVillaAPI.Controllers
         [ProducesResponseType(StatusCodes.Status406NotAcceptable)]
         public ActionResult<IEnumerable<VillaDTO>> GetVillas()
         {
-            _logger.Log("Getting all villas.", "");
             return Ok(VillaStore.villaList);
         }
 
@@ -39,16 +35,13 @@ namespace Restful_MagicVillaAPI.Controllers
         {
             if (id == 0)
             {
-                _logger.Log("Get Villa with Error with id :" + id, "Error");
                 return BadRequest();
             }
             var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
             if (villa == null)
             {
-                _logger.Log("Requested Villa Not found, id :" + id, "Error");
                 return NotFound();
             }
-            _logger.Log("Requested Villa returned, id :" + id, "");
             return Ok(villa);
         }
 
@@ -60,16 +53,13 @@ namespace Restful_MagicVillaAPI.Controllers
         {
             if (name == null)
             {
-                _logger.Log("Get Villa with Error with name :" + name, "Error");
                 return BadRequest(string.Empty);
             }
             var villa = VillaStore.villaList.FirstOrDefault(u => u.Name == name);
             if (villa == null)
             {
-                _logger.Log("Requested Villa Not found, id :" + name, "Error");
                 return NotFound(string.Empty);
             }
-            _logger.Log("Requested Villa returned, id :" + name, "");
             return Ok(villa);
         }
 
@@ -89,25 +79,21 @@ namespace Restful_MagicVillaAPI.Controllers
             if (VillaStore.villaList.FirstOrDefault(u => u.Name.ToLower() == villaDTO.Name.ToLower()) != null)
             {
                 ModelState.AddModelError("CustomError", "Villa Already Exists");
-                _logger.Log("Bad Request", "Error");
                 return BadRequest(ModelState);
             }
             if (villaDTO == null)
             {
-                _logger.Log("Bad Request", "Error");
                 return BadRequest();
             }
 
             if (villaDTO.Id > 0)
             {
-                _logger.Log("Villa Id not found", "Error");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
 
             villaDTO.Id = VillaStore.villaList.OrderByDescending(u => u.Id).FirstOrDefault().Id + 1;
 
             VillaStore.villaList.Add(villaDTO);
-            _logger.Log("Villa Created with id :" + villaDTO.Id, "");
             return CreatedAtRoute("GetVilla", new { id = villaDTO.Id }, villaDTO);
         }
 
@@ -119,17 +105,14 @@ namespace Restful_MagicVillaAPI.Controllers
         {
             if (id == 0)
             {
-                _logger.Log("Requested villa is not found", "Error");
                 return BadRequest();
             }
             var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
             if (villa == null)
             {
-                _logger.Log("Requested villa is not found", "Error");
                 return NotFound();
             }
             VillaStore.villaList.Remove(villa);
-            _logger.Log("Requested villa is deleted", "Error");
             return NoContent();
         }
 
@@ -140,7 +123,6 @@ namespace Restful_MagicVillaAPI.Controllers
         {
             if (villaDTO == null || id != villaDTO.Id)
             {
-                _logger.Log("Requested villa is found", "");
                 return BadRequest();
             }
 
@@ -149,7 +131,6 @@ namespace Restful_MagicVillaAPI.Controllers
             villa.Name = villaDTO.Name;
             villa.Occupacy = villaDTO.Occupacy;
             villa.Sqft = villaDTO.Sqft;
-            _logger.Log("Requested villa is Updated", "");  
             return NoContent();
         }
 
@@ -160,13 +141,11 @@ namespace Restful_MagicVillaAPI.Controllers
         {
             if (patchDTO == null || id == 0)
             {
-                _logger.Log("Requested villa is found", "");
                 return BadRequest();
             }
             var villa = VillaStore.villaList.FirstOrDefault(u => u.Id == id);
             if (villa == null)
             {
-                _logger.Log("Requested villa is found", "");
                 return BadRequest();
             }
             patchDTO.ApplyTo(villa, ModelState);
@@ -174,7 +153,6 @@ namespace Restful_MagicVillaAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            _logger.Log("Requested villa is Updated", "");
             return NoContent();
         }
     }
