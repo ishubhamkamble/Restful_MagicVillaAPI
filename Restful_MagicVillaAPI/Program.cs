@@ -1,8 +1,13 @@
 
+using Microsoft.EntityFrameworkCore;
+using Restful_MagicVillaAPI.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddDbContext<ApplicationDBContext>(option=> {
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultSQLConnection"));
+    });
 //Adding Content Negotiation for acccepting/denying the xml input and outputv
 builder.Services.AddControllers(option=>
                 { /*option.ReturnHttpNotAcceptable = true;*/ })
